@@ -1,5 +1,5 @@
 class GLTilemap {
-  constructor(pos, size, res, img, tilemapData, tilesList,
+  constructor(pos, size, res, img, tilemapData, tilesList, nearest=false,
               shad = createShader(GLTilemap.vertShader, GLTilemap.fragShader),
               fbo, rdr = window, canvas = _renderer) {
     { // Load parameters
@@ -11,6 +11,7 @@ class GLTilemap {
       this.tilemapData = tilemapData;
       this.shad = shad;
       this.img.texture = canvas.getTexture(this.img);
+      if (nearest) this.img.texture.setInterpolation(NEAREST, NEAREST);
       this.rdr = rdr;
       this.canvas = canvas;
       this.gl = canvas.drawingContext;
@@ -142,7 +143,6 @@ GLTilemap.fragShader = `#version 300 es
     vec2 tilemapSize = vec2(textureSize(uSampler, 0));
     vec2 tileSize = 1.0 / tilemapSize;
     vec2 tileTexCoord = mod(vTexCoord, tileSize) * tilemapSize;
-    tileTexCoord.y = 1.0 - tileTexCoord.y;
 
     fragColor = texture(atlas, fCoords.rg + tileTexCoord * fCoords.ba);
   }
